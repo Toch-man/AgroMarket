@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-require("dotenv");
+require("dotenv").config();
 
 const app = express();
 
@@ -17,15 +17,23 @@ app.use(
   })
 );
 
-const authrRoutes = requires("../routes/authRoutes");
+const authRoutes = require("./routes/auth");
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("api/order", orderRoutes);
 
-app.use("/auth", authRoutes);
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Server is running" });
+});
 
 mongoose
-  .connect("mongo url")
-  .then(() => console.log("database connected"))
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
   .catch((err) => {
-    console.log(`database failed t connect ${err}`);
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
   });
 
 const PORT = process.env.PORT || 5000;
