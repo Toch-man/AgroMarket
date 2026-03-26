@@ -10,112 +10,84 @@ io.on("connection", (socket) => {
     //user details
   });
 
-  socket.on("private-message", async (data) => {
+  // ═══════════════════════════════════════════════
+  // JOIN ORDER CHAT ROOM
+  // ═══════════════════════════════════════════════
+
+  socket.on("join-order-room", async (data) => {
+    // data = { orderId }
     try {
-      const recipientSocket = Array.from(active_users).entries.find(
-        ([id, info]) => info.userId === data.toUserId
-      )?.[0];
+      const order = await Order.findById(data.orderId).populate(
+        "buyer farmer",
+        "_id"
+      );
 
-      const message = {
-        id: Date.now(),
-        from: user._id,
-        fromUsername: user.name,
-        to: recipientSocket,
-        text: data.text,
-        timestap: new Date(),
-      };
+      if (!order) {
+        return socket.emit("error", { message: "Order not found" });
+      }
 
-      if (recipientSocket) {
-        io.to(recipientSocket).emit("private-message", message);
+      const isBuyer = order.buyer._id.toString() === user._id.toString();
+      const isFarmer = order.farmer._id.toString() === user._id.toString();
 
-        socket.emit("message-sent", {
-          tempId: data.tempId,
-          message,
-        });
-
-        await new Message(message).save();
-      } else {
-        // Recipient is OFFLINE - just save to database
-        socket.emit("message-sent", {
-          tempId: data.tempId,
-          message, //
-          delivered: false,
-          info: "User is offline. Message will be delivered when they come online.",
+      // only buyer and farmer of this order can join
+      if (!isBuyer && !isFarmer) {
+        return socket.emit("error", {
+          message: "Not authorized for this order chat",
         });
       }
+
+      const roomId = `order_${data.orderId}`;
+      socket.join(roomId);
+
+      socket.emit("joined-order-room", { orderId: data.orderId, roomId });
     } catch (error) {
-      socket.emit("error", {
-        message: "Failed to send message",
-        error: error.message,
-      });
+      socket.emit("error", { message: "Could not join order room" });
     }
   });
 
-  //get  message when user come online
-  socket.on("get-online-message", async (data) => {
+  // ═══════════════════════════════════════════════
+  // SEND ORDER MESSAGE
+  // ═══════════════════════════════════════════════
+
+  socket.on("order-message", async (data) => {
+    // data = { orderId, text }
     try {
-      const offline_message = await Message.find({
-        to: user._id,
-        delivered: false,
-      }).sort({ timestamp: 1 });
+      const roomId = `order_${data.orderId}`;
 
-      socket.emit("offline-message", offline_message);
-      await Message.updateMany(
-        { to: user._id, delivered: false },
-        { delivered: true }
-      );
+      const message = {
+        from: user._id,
+        fromUsername: user.username,
+        orderId: data.orderId,
+        text: data.text,
+        timestamp: new Date(),
+        type: "order",
+        delivered: true,
+      };
+
+      await new Message(message).save();
+
+      // send to both buyer and farmer in the room
+      io.to(roomId).emit("order-message", message);
     } catch (error) {
-      console.error("Error fetching offline messages:", error);
+      socket.emit("error", { message: "Failed to send message" });
     }
   });
 
-  //Get chat history
-  socket.on("chat-history", async (data) => {
+  // ═══════════════════════════════════════════════
+  // GET ORDER CHAT HISTORY
+  // ═══════════════════════════════════════════════
+
+  socket.on("get-order-history", async (data) => {
+    // data = { orderId }
     try {
       const messages = await Message.find({
-        $or: [
-          { from: user._id, to: data.withUserId },
-          { from: data.withUserId, to: user._id },
-        ],
-      })
-        .sort({ timestamp: -1 })
-        .limit(data.limit || 5)
-        .skip(data.skip || 0);
+        orderId: data.orderId,
+        type: "order",
+      }).sort({ timestamp: 1 });
 
-      socket.emit("chat-history", {
-        withUserId: data.withUserId,
-        messages: messages.reverse,
-      });
+      socket.emit("order-history", { orderId: data.orderId, messages });
     } catch (error) {
-      socket.emit("error", {
-        message: "Failed to load chat history",
-      });
+      socket.emit("error", { message: "Failed to load order chat" });
     }
   });
-
-  //Typing indicator
-  socket.on("typing", async (data) => {
-    const recipientSocket = Array.from(active_users.entries()).find(
-      ([id, info]) => info.userId === data.toUserId
-    )?.[0];
-
-    if (recipientSocket) {
-      io.to(recipientSocket).emit("user-typing", {
-        from: user._id,
-        fromUsername: user.name,
-      });
-    }
-  });
-
-  socket.on("stop-typing", async (data) => {
-    const recipient_Socket = Array.from(active_users.entries()).find(
-      ([id, info]) => info.userId === data.toUserId
-    )?.[0];
-  });
-
-  if (recipientSocket) {
-    io.to(recipientSocket).emit("stopped-typing", {
-      from: user._id,
-    });
-  }
 });

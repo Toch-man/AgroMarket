@@ -1,4 +1,4 @@
-// controllers/orderController.js
+const mongoose = require("mongoose");
 const { validationResult } = require("express-validator");
 const Order = require("../model/order");
 const Product = require("../model/product");
@@ -42,7 +42,6 @@ exports.place_order = async (req, res) => {
       });
     }
 
-    // check farmer accepts this payment method
     if (!product.accepted_payment_methods.includes(payment_method)) {
       return res.status(400).json({
         success: false,
@@ -52,7 +51,6 @@ exports.place_order = async (req, res) => {
       });
     }
 
-    // if crypto, grab farmer's wallet address
     let crypto_wallet_address = null;
     if (payment_method === "crypto") {
       const farmer = await User.findById(product.owner).select(
@@ -83,7 +81,6 @@ exports.place_order = async (req, res) => {
 
     await order.save();
 
-    // deduct quantity from product
     product.quantity -= quantity;
     product.orders_count += 1;
     if (product.quantity === 0) product.status = "sold_out";
@@ -122,7 +119,7 @@ exports.get_my_orders = async (req, res) => {
   }
 };
 
-// GET /orders/farmer-orders — farmer
+// GET /orders/farmer-orders
 exports.get_farmer_orders = async (req, res) => {
   try {
     const orders = await Order.find({ farmer: req.user.id })
@@ -140,7 +137,93 @@ exports.get_farmer_orders = async (req, res) => {
   }
 };
 
-// PATCH /orders/:id/ship — farmer marks shipped
+// GET /orders/stats farmer dashboard stats
+exports.get_farmer_stats = async (req, res) => {
+  try {
+    const farmer_id = req.user.id;
+
+    const [
+      total_orders,
+      pending_orders,
+      delivered_orders,
+      cancelled_orders,
+      total_revenue,
+    ] = await Promise.all([
+      Order.countDocuments({ farmer: farmer_id }),
+      Order.countDocuments({ farmer: farmer_id, delivery_status: "pending" }),
+      Order.countDocuments({ farmer: farmer_id, delivery_status: "delivered" }),
+      Order.countDocuments({ farmer: farmer_id, delivery_status: "cancelled" }),
+      Order.aggregate([
+        {
+          $match: {
+            farmer: new mongoose.Types.ObjectId(farmer_id),
+            escrow_status: "released",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$total_amount" },
+          },
+        },
+      ]),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        total_orders,
+        pending_orders,
+        delivered_orders,
+        cancelled_orders,
+        total_revenue: total_revenue[0]?.total || 0,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Could not fetch stats",
+      error: error.message,
+    });
+  }
+};
+
+// GET /orders/:id
+exports.get_order = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("product", "name images unit category")
+      .populate("buyer", "name phone email")
+      .populate("farmer", "name phone email");
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    const is_involved =
+      order.buyer._id.toString() === req.user.id ||
+      order.farmer._id.toString() === req.user.id;
+
+    if (!is_involved) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to view this order",
+      });
+    }
+
+    return res.status(200).json({ success: true, order });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Could not fetch order",
+      error: error.message,
+    });
+  }
+};
+
+// PATCH /orders/:id/ship
 exports.mark_shipped = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -178,7 +261,7 @@ exports.mark_shipped = async (req, res) => {
   }
 };
 
-// PATCH /orders/:id/delivered — buyer confirms delivery, releases escrow
+// PATCH /orders/:id/delivered
 exports.confirm_delivery = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -254,7 +337,6 @@ exports.cancel_order = async (req, res) => {
     order.payment_status = "refunded";
     await order.save();
 
-    // restore product quantity
     await Product.findByIdAndUpdate(order.product, {
       $inc: { quantity: order.quantity, orders_count: -1 },
       status: "available",
@@ -272,10 +354,18 @@ exports.cancel_order = async (req, res) => {
   }
 };
 
-// PATCH /orders/:id/crypto-proof — buyer submits tx hash
+// PATCH /orders/:id/crypto-proof
 exports.submit_crypto_proof = async (req, res) => {
   try {
     const { tx_hash } = req.body;
+
+    if (!tx_hash) {
+      return res.status(400).json({
+        success: false,
+        message: "Transaction hash is required",
+      });
+    }
+
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -294,6 +384,13 @@ exports.submit_crypto_proof = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "This order is not a crypto order" });
+    }
+
+    if (order.payment_status === "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Order is already marked as paid",
+      });
     }
 
     order.crypto_tx_hash = tx_hash;
