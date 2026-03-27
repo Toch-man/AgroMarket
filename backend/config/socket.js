@@ -1,4 +1,5 @@
 const Message = require("../model/message");
+const io = require("socket.io");
 
 const active_users = new Map();
 io.on("connection", (socket) => {
