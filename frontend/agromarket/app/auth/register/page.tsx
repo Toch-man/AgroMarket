@@ -45,13 +45,13 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const data: { user: User; token: string } = await api("/auth/register", {
+      const data: { user: User; token: string } = await api("/auth/signup", {
         method: "POST",
         body: JSON.stringify(form),
       });
 
       login(data.user, data.token);
-      router.push(data.user.role === "farmer" ? "/dashboard" : "/products");
+      router.push(data.user.role === "farmer" ? "/dashboard" : "/product");
     } catch (err: any) {
       setError(err.message);
     } finally {
