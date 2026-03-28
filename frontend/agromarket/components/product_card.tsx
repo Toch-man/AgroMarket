@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </p>
 
       <Link
-        href={`/products/${product._id}`}
+        href={`/product/${product._id}`}
         className="mt-auto bg-green-700 text-white text-sm text-center py-2 rounded"
       >
         View Product
