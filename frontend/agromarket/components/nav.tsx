@@ -14,7 +14,7 @@ export default function Navbar() {
       </Link>
 
       <div className="flex gap-6 items-center text-sm">
-        <Link href="/products">Browse</Link>
+        <Link href="/product">Browse</Link>
 
         {!user && (
           <>
@@ -25,7 +25,7 @@ export default function Navbar() {
 
         {user?.role === "farmer" && <Link href="/dashboard">Dashboard</Link>}
 
-        {user?.role === "buyer" && <Link href="/orders">My Orders</Link>}
+        {user?.role === "buyer" && <Link href="/order">My Orders</Link>}
 
         {user && (
           <button

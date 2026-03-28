@@ -1,4 +1,3 @@
-// app/page.tsx
 import Link from "next/link";
 
 export default function LandingPage() {
@@ -13,7 +12,7 @@ export default function LandingPage() {
 
         <div className="flex gap-4 justify-center">
           <Link
-            href="/products"
+            href="/product"
             className="bg-green-700 text-white px-6 py-3 rounded font-medium"
           >
             Browse Products
