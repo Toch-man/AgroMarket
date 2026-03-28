@@ -67,7 +67,7 @@ export default function OrdersPage() {
               </div>
 
               <Link
-                href={`/orders/${order._id}`}
+                href={`/order/${order._id}`}
                 className="bg-green-700 text-white text-sm px-4 py-2 rounded"
               >
                 View
