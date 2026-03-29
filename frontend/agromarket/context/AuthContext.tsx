@@ -20,7 +20,13 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  token: null,
+  loading: true,
+  login: () => {},
+  logout: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -29,16 +35,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const stored_user = localStorage.getItem("user");
-    const stored_token = localStorage.getItem("token");
+    try {
+      const stored_user = localStorage.getItem("user");
+      const stored_token = localStorage.getItem("token");
 
-    if (stored_user && stored_token) {
-      setUser(JSON.parse(stored_user));
-      setToken(stored_token);
-      connect_socket();
+      if (stored_user && stored_token) {
+        setUser(JSON.parse(stored_user));
+        setToken(stored_token);
+        connect_socket();
+      }
+    } catch (err) {
+      console.error("Auth init error:", err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   const login = (user_data: User, user_token: string): void => {
@@ -65,8 +75,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used inside AuthProvider");
-  return context;
-};
+export const useAuth = (): AuthContextType => useContext(AuthContext);
