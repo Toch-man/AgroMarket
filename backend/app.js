@@ -18,7 +18,7 @@ const io = new Server(server, {
   },
 });
 
-// ── middleware ──
+// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
