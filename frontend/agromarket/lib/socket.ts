@@ -1,7 +1,9 @@
 // lib/socket.ts
-import { io, Socket } from "socket.io-client";
+import io from "socket.io-client";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SOCKET_URL as string;
+
+type Socket = ReturnType<typeof io>;
 
 let socket: Socket | null = null;
 

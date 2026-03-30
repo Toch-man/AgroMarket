@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { connect_socket } from "@/lib/socket";
 import { useAuth } from "@/context/AuthContext";
 import { Message } from "@/types";
-import { Socket } from "socket.io-client";
+import io from "socket.io-client";
 
 interface ChatBoxProps {
   order_id: string;
@@ -16,6 +16,8 @@ export default function ChatBox({ order_id }: ChatBoxProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState<string>("");
   const [typing, setTyping] = useState<string | null>(null);
+
+  type Socket = ReturnType<typeof io>;
   const socket = connect_socket() as Socket;
   const bottom = useRef<HTMLDivElement>(null);
 
