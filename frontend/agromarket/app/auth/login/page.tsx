@@ -40,8 +40,8 @@ export default function LoginPage() {
 
       login(data.user, data.token);
       router.push(data.user.role === "farmer" ? "/dashboard" : "/products");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }

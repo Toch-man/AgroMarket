@@ -10,6 +10,11 @@ import io from "socket.io-client";
 interface ChatBoxProps {
   order_id: string;
 }
+declare global {
+  interface Window {
+    typing_timer: ReturnType<typeof setTimeout> | undefined;
+  }
+}
 
 export default function ChatBox({ order_id }: ChatBoxProps) {
   const { user } = useAuth();
@@ -65,8 +70,8 @@ export default function ChatBox({ order_id }: ChatBoxProps) {
   const handle_typing = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setText(e.target.value);
     socket.emit("typing", { orderId: order_id });
-    clearTimeout((window as any).typing_timer);
-    (window as any).typing_timer = setTimeout(() => {
+    clearTimeout(window.typing_timer);
+    window.typing_timer = setTimeout(() => {
       socket.emit("stop-typing", { orderId: order_id });
     }, 1500);
   };

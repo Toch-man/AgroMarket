@@ -1,10 +1,10 @@
 // lib/api.ts
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const api = async (
+const api = async <T = Record<string, unknown>>(
   endpoint: string,
   options: RequestInit = {}
-): Promise<any> => {
+): Promise<T> => {
   const token = localStorage.getItem("token");
 
   const config: RequestInit = {

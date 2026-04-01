@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import api from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Product } from "@/types";
@@ -36,7 +37,7 @@ export default function SingleProductPage() {
   useEffect(() => {
     const fetch_product = async (): Promise<void> => {
       try {
-        const data = await api(`/products/${id}`);
+        const data: any = await api(`/products/${id}`);
         setProduct(data.product);
       } catch (err) {
         console.error(err);
@@ -53,7 +54,7 @@ export default function SingleProductPage() {
     setOrdering(true);
 
     try {
-      const order_data = await api("/orders", {
+      const order_data: any = await api("/orders", {
         method: "POST",
         body: JSON.stringify({
           product_id: id,
@@ -64,7 +65,7 @@ export default function SingleProductPage() {
       });
 
       if (form.payment_method === "interswitch") {
-        const payment_data = await api("/payments/initialize", {
+        const payment_data: any = await api("/payments/initialize", {
           method: "POST",
           body: JSON.stringify({ order_id: order_data.order._id }),
         });
@@ -72,8 +73,8 @@ export default function SingleProductPage() {
       } else {
         router.push(`/orders/${order_data.order._id}`);
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setOrdering(false);
     }
@@ -88,9 +89,11 @@ export default function SingleProductPage() {
       <div className="bg-white rounded-lg shadow p-6 flex flex-col md:flex-row gap-8">
         <div className="md:w-1/2">
           {product.images?.length > 0 ? (
-            <img
+            <Image
               src={product.images[0].url}
               alt={product.name}
+              height={256}
+              width={400}
               className="w-full h-64 object-cover rounded"
             />
           ) : (

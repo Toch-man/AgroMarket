@@ -42,10 +42,11 @@ export default function DashboardPage() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM);
+  const [images, setImages] = useState<FileList | null>(null);
 
   const fetch_data = async (): Promise<void> => {
     try {
-      const [products_res, orders_res] = await Promise.all([
+      const [products_res, orders_res]: any = await Promise.all([
         api(`/products/farmer/${user?._id}`),
         api("/orders/farmer-orders"),
       ]);
@@ -62,23 +63,57 @@ export default function DashboardPage() {
     if (user) fetch_data();
   }, [user]);
 
+  const handle_image_change = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.files) {
+      setImages(e.target.files);
+    }
+  };
+
   const handle_submit = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
+    const form_data = new FormData();
+    form_data.append("name", form.name);
+    form_data.append("category", form.category);
+    form_data.append("description", form.description);
+    form_data.append("quantity", form.quantity);
+    form_data.append("unit", form.unit);
+    form_data.append("price_per_unit", form.price_per_unit);
+    form_data.append("min_order_quantity", String(form.min_order_quantity));
+    form_data.append("location", JSON.stringify(form.location));
+    form_data.append("grade", form.grade);
+    form_data.append(
+      "accepted_payment_methods",
+      JSON.stringify(form.accepted_payment_methods)
+    );
+
+    // append each image file
+    if (images) {
+      Array.from(images).forEach((file) => {
+        form_data.append("images", file);
+      });
+    }
 
     try {
       await api("/products/upload", {
         method: "POST",
-        body: JSON.stringify(form),
+        body: form_data,
+        headers: {
+          // override the Content-Type that api.ts sets
+          // FormData needs multipart/form-data which browser sets automatically
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+
       setShowForm(false);
       setForm(EMPTY_FORM);
+      setImages(null);
       fetch_data();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setSubmitting(false);
     }
@@ -279,6 +314,23 @@ export default function DashboardPage() {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="text-sm font-medium">
+                Product Images (max 5)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handle_image_change}
+                className="w-full border rounded px-3 py-2 text-sm mt-1"
+              />
+              {images && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {images.length} image{images.length > 1 ? "s" : ""} selected
+                </p>
+              )}
             </div>
 
             <div className="sm:col-span-2">

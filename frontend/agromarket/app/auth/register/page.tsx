@@ -52,8 +52,8 @@ export default function RegisterPage() {
 
       login(data.user, data.token);
       router.push(data.user.role === "farmer" ? "/dashboard" : "/product");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
