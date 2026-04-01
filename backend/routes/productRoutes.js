@@ -2,6 +2,7 @@
 const express = require("express");
 const productController = require("../controllers/productController");
 const { verifyToken, isFarmer } = require("../middleware/auth");
+const { upload } = require("../config/cloudinary"); // import upload middleware
 const router = express.Router();
 const { body } = require("express-validator");
 
@@ -32,6 +33,14 @@ const uploadProductValidator = [
 ];
 
 // Public routes
+// farmer routes — upload.array("images", 5) allows up to 5 images
+router.post(
+  "/upload",
+  verifyToken,
+  isFarmer,
+  upload.array("images", 5),
+  productController.upload
+);
 router.get("/", productController.get_all_products);
 router.get("/farmer/:farmerId", productController.get_farmer_products);
 router.get("/:id", productController.get_product);

@@ -1,7 +1,7 @@
 // controllers/productController.js
 const { validationResult } = require("express-validator");
 const Product = require("../model/product");
-
+s;
 exports.upload = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -19,12 +19,19 @@ exports.upload = async (req, res) => {
       min_order_quantity,
       location,
       grade,
-      is_negotiable,
-      harvest_date,
+      accepted_payment_methods,
       is_pre_order,
+      harvest_date,
     } = req.body;
 
-    // owner comes from the verified JWT token, not req.body
+    // images come from multer — req.files has the uploaded files
+    const images = req.files
+      ? req.files.map((file) => ({
+          url: file.path, // cloudinary URL
+          public_id: file.filename, // cloudinary public_id for deletion later
+        }))
+      : [];
+
     const product = new Product({
       name,
       owner: req.user.id,
@@ -34,14 +41,15 @@ exports.upload = async (req, res) => {
       unit,
       price_per_unit,
       min_order_quantity,
-      location,
+      location: typeof location === "string" ? JSON.parse(location) : location,
       grade,
-      is_negotiable,
-      harvest_date,
+      accepted_payment_methods:
+        typeof accepted_payment_methods === "string"
+          ? JSON.parse(accepted_payment_methods)
+          : accepted_payment_methods,
       is_pre_order,
-      images: req.files
-        ? req.files.map((f) => ({ url: f.path, public_id: f.filename }))
-        : [],
+      harvest_date,
+      images,
     });
 
     await product.save();
@@ -55,7 +63,7 @@ exports.upload = async (req, res) => {
     console.error("Upload error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error during upload, try again",
+      message: "Server error during upload",
       error: error.message,
     });
   }
