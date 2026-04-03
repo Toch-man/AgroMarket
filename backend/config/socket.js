@@ -1,4 +1,3 @@
-// config/socket.js
 const Message = require("../model/message");
 const Order = require("../model/order");
 const socketAuth = require("../middleware/socketAuth");

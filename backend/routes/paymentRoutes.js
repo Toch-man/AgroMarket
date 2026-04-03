@@ -1,4 +1,3 @@
-// routes/paymentRoutes.js
 const express = require("express");
 const paymentController = require("../controllers/paymentController");
 const { verifyToken, isBuyer } = require("../middleware/auth");

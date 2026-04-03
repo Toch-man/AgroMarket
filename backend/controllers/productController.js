@@ -1,4 +1,3 @@
-// controllers/productController.js
 const { validationResult } = require("express-validator");
 const Product = require("../model/product");
 s;

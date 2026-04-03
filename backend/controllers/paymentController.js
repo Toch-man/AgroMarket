@@ -1,4 +1,3 @@
-// controllers/paymentController.js
 const Order = require("../model/order");
 
 const CLIENT_ID = process.env.INTERSWITCH_CLIENT_ID;

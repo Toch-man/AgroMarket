@@ -13,7 +13,7 @@ export default function OrdersPage() {
   useEffect(() => {
     const fetch_orders = async (): Promise<void> => {
       try {
-        const data = await api("/orders/my-orders");
+        const data: any = await api("/orders/my-orders");
         setOrders(data.orders);
       } catch (err) {
         console.error(err);

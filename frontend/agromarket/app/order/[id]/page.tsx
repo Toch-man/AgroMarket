@@ -1,4 +1,3 @@
-// app/orders/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ export default function OrderDetailPage() {
 
   const fetch_order = async (): Promise<void> => {
     try {
-      const data = await api(`/orders/${id}`);
+      const data: any = await api(`/orders/${id}`);
       setOrder(data.order);
     } catch (err) {
       console.error(err);

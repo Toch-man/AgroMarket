@@ -1,4 +1,3 @@
-// app.js
 require("dotenv").config(); // must be first line
 
 const express = require("express");

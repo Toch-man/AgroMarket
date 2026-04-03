@@ -40,7 +40,7 @@ export default function ProductsPage() {
       if (filters.state) params.append("state", filters.state);
       if (filters.search) params.append("search", filters.search);
 
-      const data = await api(`/products?${params.toString()}`);
+      const data: any = await api(`/products?${params.toString()}`);
       setProducts(data.products);
     } catch (err) {
       console.error(err);

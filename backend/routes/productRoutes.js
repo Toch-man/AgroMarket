@@ -1,4 +1,3 @@
-// routes/productRoutes.js
 const express = require("express");
 const productController = require("../controllers/productController");
 const { verifyToken, isFarmer } = require("../middleware/auth");
