@@ -21,9 +21,25 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+const allowed_origins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3001",
+    origin: allowed_origins,
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.options(
+  "*",
+  cors({
+    origin: allowed_origins,
     credentials: true,
   })
 );

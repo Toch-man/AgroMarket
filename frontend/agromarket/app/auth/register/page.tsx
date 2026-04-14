@@ -9,7 +9,9 @@ import { useAuth } from "@/context/AuthContext";
 import { User } from "@/types";
 
 interface RegisterForm {
-  name: string;
+  first_name: string;
+  last_name: string;
+  user_name: string;
   email: string;
   password: string;
   role: "buyer" | "farmer";
@@ -21,7 +23,9 @@ export default function RegisterPage() {
   const router = useRouter();
 
   const [form, setForm] = useState<RegisterForm>({
-    name: "",
+    first_name: "",
+    last_name: "",
+    user_name: "",
     email: "",
     password: "",
     role: "buyer",
@@ -74,10 +78,32 @@ export default function RegisterPage() {
 
         <form onSubmit={handle_submit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
+            <label className="block text-sm font-medium mb-1">First Name</label>
             <input
-              name="name"
-              value={form.name}
+              name="username"
+              value={form.first_name}
+              onChange={handle_change}
+              className="w-full border rounded px-3 py-2 text-sm"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">last Name</label>
+            <input
+              name="username"
+              value={form.last_name}
+              onChange={handle_change}
+              className="w-full border rounded px-3 py-2 text-sm"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">user_Name</label>
+            <input
+              name="username"
+              value={form.user_name}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
               placeholder="John Doe"
