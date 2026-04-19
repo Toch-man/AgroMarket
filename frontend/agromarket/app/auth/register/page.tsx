@@ -80,22 +80,22 @@ export default function RegisterPage() {
           <div>
             <label className="block text-sm font-medium mb-1">First Name</label>
             <input
-              name="username"
+              name="first_name"
               value={form.first_name}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
-              placeholder="John Doe"
+              placeholder="John"
               required
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">last Name</label>
             <input
-              name="username"
+              name="last_name"
               value={form.last_name}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
-              placeholder="John Doe"
+              placeholder="John"
               required
             />
           </div>
@@ -106,7 +106,7 @@ export default function RegisterPage() {
               value={form.user_name}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
-              placeholder="John Doe"
+              placeholder="John"
               required
             />
           </div>
