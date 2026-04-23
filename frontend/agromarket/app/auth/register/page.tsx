@@ -102,7 +102,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-sm font-medium mb-1">user_Name</label>
             <input
-              name="username"
+              name="user_name"
               value={form.user_name}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"

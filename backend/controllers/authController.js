@@ -13,7 +13,8 @@ exports.signup = async (req, res) => {
   }
 
   try {
-    const { username, email, password, first_name, last_name, role } = req.body;
+    const { username, email, password, first_name, last_name, role, phone } =
+      req.body;
 
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
@@ -248,7 +249,7 @@ exports.getCurrentUser = async (req, res) => {
       success: true,
       user: {
         id: user._id,
-        username: user.username,
+        username: user.user_name,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
