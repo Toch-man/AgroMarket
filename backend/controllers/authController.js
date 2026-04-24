@@ -36,6 +36,7 @@ exports.signup = async (req, res) => {
       password: hashedPassword,
       first_name,
       last_name,
+      phone,
       role: role || "buyer",
       wallet: {
         balance: 0,
