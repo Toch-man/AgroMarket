@@ -38,12 +38,13 @@ router.get("/farmer/:farmerId", productController.get_farmer_products);
 router.get("/:id", productController.get_product);
 
 // Farmer-only routes
-// farmer routes — upload.array("images", 5) allows up to 5 images
+// farmer route
 router.post(
   "/upload",
   verifyToken,
   isFarmer,
   upload.array("images", 5),
+  uploadProductValidator,
   productController.upload
 );
 router.patch("/:id", verifyToken, isFarmer, productController.update_product);

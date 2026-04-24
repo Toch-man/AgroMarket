@@ -89,7 +89,8 @@ mongoose
   });
 
 // GLOBAL 404 HANDLER
-app.use((req, res) => {
+// This works with new path-to-regexp
+app.use("*splat", (req, res) => {
   res.status(404).json({
     success: false,
     message: "Route not found",
