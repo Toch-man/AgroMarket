@@ -11,7 +11,7 @@ import { User } from "@/types";
 interface RegisterForm {
   first_name: string;
   last_name: string;
-  user_name: string;
+  username: string;
   email: string;
   password: string;
   role: "buyer" | "farmer";
@@ -25,7 +25,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState<RegisterForm>({
     first_name: "",
     last_name: "",
-    user_name: "",
+    username: "",
     email: "",
     password: "",
     role: "buyer",
@@ -49,12 +49,12 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const data: { user: User; token: string } = await api("/auth/signup", {
+      const data: any = await api("/auth/signup", {
         method: "POST",
         body: JSON.stringify(form),
       });
 
-      login(data.user, data.token);
+      login(data.user, data.accessToken);
       router.push(data.user.role === "farmer" ? "/dashboard" : "/product");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -103,7 +103,7 @@ export default function RegisterPage() {
             <label className="block text-sm font-medium mb-1">user_Name</label>
             <input
               name="user_name"
-              value={form.user_name}
+              value={form.username}
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
               placeholder="John"
