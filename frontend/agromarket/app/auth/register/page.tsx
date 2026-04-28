@@ -13,7 +13,7 @@ interface RegisterForm {
   username: string;
   email: string;
   password: string;
-  role: "buyer" | "farmer";
+  role: "Buyer" | "Farmer";
   phone: string;
 }
 
@@ -27,7 +27,7 @@ export default function RegisterPage() {
     username: "",
     email: "",
     password: "",
-    role: "buyer",
+    role: "Buyer",
     phone: "",
   });
 
@@ -155,8 +155,8 @@ export default function RegisterPage() {
               onChange={handle_change}
               className="w-full border rounded px-3 py-2 text-sm"
             >
-              <option value="buyer">Buyer</option>
-              <option value="farmer">Farmer</option>
+              <option value="Buyer">Buyer</option>
+              <option value="Farmer">Farmer</option>
             </select>
           </div>
 
