@@ -8,7 +8,7 @@ const signupValidation = [
   body("username").trim().isLength({ min: 3, max: 30 }),
   body("email").isEmail().normalizeEmail(),
   body("password").isLength({ min: 6 }),
-  body("role").isIn(["buyer", "seller"]),
+  body("role").isIn(["Buyer", "Farmer"]),
 ];
 
 const loginValidation = [

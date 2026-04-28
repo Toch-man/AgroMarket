@@ -8,7 +8,8 @@ exports.signup = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      errors: errors.array(),
+      message: errors[0].msg,
+      errors: errors,
     });
   }
 
@@ -37,7 +38,7 @@ exports.signup = async (req, res) => {
       first_name,
       last_name,
       phone,
-      role: role || "buyer",
+      role: role || "Buyer",
       wallet: {
         balance: 0,
         escrow_balance: 0,
