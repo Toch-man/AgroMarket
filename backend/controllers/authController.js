@@ -90,8 +90,7 @@ exports.signup = async (req, res) => {
     console.error("Signup error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error during registration",
-      error: error.message,
+      message: error.message,
     });
   }
 };
