@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 exports.verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer")) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       success: false,
       message: "No token provided",
@@ -33,7 +33,7 @@ exports.verifyToken = (req, res, next) => {
 };
 
 exports.isFarmer = (req, res, next) => {
-  if (req.user.role === "seller") {
+  if (req.user.role === "Farmer") {
     return next();
   }
 

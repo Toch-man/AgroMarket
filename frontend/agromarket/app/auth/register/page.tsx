@@ -48,13 +48,22 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const data: any = await api("/auth/signup", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
+      // use fetch directly or add a helper to api.ts
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+
+      if (!data.success) throw new Error(data.message);
 
       login(data.user, data.accessToken);
-      router.push(data.user.role === "farmer" ? "/dashboard" : "/product");
+      router.push(data.user.role === "Farmer" ? "/dashboard" : "/product");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

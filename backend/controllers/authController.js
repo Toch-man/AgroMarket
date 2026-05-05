@@ -8,7 +8,7 @@ exports.signup = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      message: errors[0].msg,
+      message: errors.array()[0].msg,
       errors: errors,
     });
   }
