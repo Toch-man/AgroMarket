@@ -1,7 +1,7 @@
 // lib/api.ts
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const api = async <T = Record<string, unknown>>(
+const api = async <T = Record<string, string>>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> => {

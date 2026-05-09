@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
 const authController = require("../controllers/authController.js");
-const { verifyToken } = require("../middleware/auth");
+const { verifyToken } = require("../middleware/auth")
 
 const signupValidation = [
   body("username").trim().isLength({ min: 3, max: 30 }),
-  body("email").isEmail().normalizeEmail(),
+  body("email").isEmail().normalizeEmail()
   body("password").isLength({ min: 6 }),
-  body("role").isIn(["Buyer", "Farmer"]),
+  body("role").isIn(["Buyer", "Farmer"])
 ];
 
 const loginValidation = [

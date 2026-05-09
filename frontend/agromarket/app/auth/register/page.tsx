@@ -49,16 +49,10 @@ export default function RegisterPage() {
 
     try {
       // use fetch directly or add a helper to api.ts
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
+      const data = await api("auth/signup", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
 
       if (!data.success) throw new Error(data.message);
 
