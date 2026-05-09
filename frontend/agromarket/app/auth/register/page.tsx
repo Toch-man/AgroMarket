@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
     try {
       // use fetch directly or add a helper to api.ts
-      const data = await api("auth/signup", {
+      const data = await api("/auth/signup", {
         method: "POST",
         body: JSON.stringify(form),
       });
