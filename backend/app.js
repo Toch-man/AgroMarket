@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const mongoose = require("mongoose");
+
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
@@ -78,16 +78,6 @@ try {
   console.error("Socket init failed:", err);
 }
 
-// DATABASE CONNECTION
-
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  });
-
 // GLOBAL 404 HANDLER
 // This works with new path-to-regexp
 app.use("*splat", (req, res) => {
@@ -95,13 +85,6 @@ app.use("*splat", (req, res) => {
     success: false,
     message: "Route not found",
   });
-});
-
-// START SERVER
-const PORT = process.env.PORT || 4000;
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
