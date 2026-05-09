@@ -8,7 +8,7 @@ console.log(" SERVER STARTED");
 console.log("MONGO_URL:", process.env.MONGO_URL);
 
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
