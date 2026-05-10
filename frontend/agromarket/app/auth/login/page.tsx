@@ -33,13 +33,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data: { user: User; token: string } = await api("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
+      const data: { user: User; accessToken: string } = await api(
+        "/auth/login",
+        {
+          method: "POST",
+          body: JSON.stringify(form),
+        }
+      );
 
-      login(data.user, data.token);
-      router.push(data.user.role === "farmer" ? "/dashboard" : "/products");
+      login(data.user, data.accessToken);
+      router.push(data.user.role === "Farmer" ? "/dashboard" : "/products");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
