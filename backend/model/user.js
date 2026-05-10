@@ -55,9 +55,8 @@ UserSchema.virtual("full_name").get(function () {
   return this.username;
 });
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", function () {
   this.updatedAt = Date.now();
-  next();
 });
 
 module.exports = mongoose.model("User", UserSchema);

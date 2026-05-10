@@ -14,7 +14,7 @@ describe("Auth routes", () => {
   };
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI);
   }, 15000);
 
   beforeEach(async () => {
