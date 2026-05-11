@@ -5,7 +5,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  role: "Farmer" | "buyer";
+  role: "Farmer" | "Buyer";
   crypto_wallets?: {
     ethereum?: string;
   };
