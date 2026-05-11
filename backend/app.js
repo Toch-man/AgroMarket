@@ -87,4 +87,4 @@ app.use("*splat", (req, res) => {
   });
 });
 
-module.exports = app;
+module.exports = {server, app};

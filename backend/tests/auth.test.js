@@ -22,7 +22,7 @@ describe("Auth routes", () => {
     for (let key in collections) {
       await collections[key].deleteMany();
     }
-  });
+  }, 15000);
 
   afterAll(async () => {
     await mongoose.connection.close();
