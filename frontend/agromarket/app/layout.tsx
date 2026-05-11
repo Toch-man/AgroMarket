@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/nav";

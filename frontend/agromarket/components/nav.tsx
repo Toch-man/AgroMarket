@@ -22,9 +22,9 @@ export default function Navbar() {
           </>
         )}
 
-        {user?.role === "farmer" && <Link href="/dashboard">Dashboard</Link>}
+        {user?.role === "Farmer" && <Link href="/dashboard">Dashboard</Link>}
 
-        {user?.role === "buyer" && <Link href="/order">My Orders</Link>}
+        {user?.role === "Buyer" && <Link href="/order">My Orders</Link>}
 
         {user && (
           <button

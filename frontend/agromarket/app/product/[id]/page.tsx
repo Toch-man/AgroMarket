@@ -131,7 +131,7 @@ export default function SingleProductPage() {
             </p>
           )}
 
-          {user?.role === "buyer" && product.status === "available" && (
+          {user?.role === "Buyer" && product.status === "available" && (
             <div className="flex flex-col gap-3 mt-2">
               <div>
                 <label className="text-sm font-medium">
