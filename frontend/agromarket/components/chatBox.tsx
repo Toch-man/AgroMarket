@@ -84,7 +84,7 @@ export default function ChatBox({ order_id }: ChatBoxProps) {
 
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-gray-50">
         {messages.map((msg, i) => {
-          const is_mine = msg.from?.toString() === user?._id?.toString();
+          const is_mine = msg.from?.toString() === user?.id?.toString();
           return (
             <div
               key={i}
