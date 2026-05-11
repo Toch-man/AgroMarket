@@ -45,8 +45,8 @@ export default function OrderDetailPage() {
   if (!order)
     return <p className="p-8 text-gray-400 text-sm">Order not found</p>;
 
-  const is_farmer = user?._id === order.farmer?._id?.toString();
-  const is_buyer = user?._id === order.buyer?._id?.toString();
+  const is_farmer = user?.id === order.farmer?._id?.toString();
+  const is_buyer = user?.id === order.buyer?._id?.toString();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-6">
