@@ -70,19 +70,13 @@ const ProductSchema = new Schema(
     harvest_date: {
       type: Date, // for pre-order / future produce listings
     },
-    is_pre_order: {
-      type: Boolean,
-      default: false,
-    },
+
     status: {
       type: String,
       enum: ["available", "sold_out", "suspended"],
       default: "available",
     },
-    views: {
-      type: Number,
-      default: 0,
-    },
+
     orders_count: {
       type: Number,
       default: 0,

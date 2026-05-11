@@ -19,7 +19,7 @@ exports.upload = async (req, res) => {
       location,
       grade,
       accepted_payment_methods,
-      is_pre_order,
+     
       harvest_date,
     } = req.body;
 
@@ -33,7 +33,7 @@ exports.upload = async (req, res) => {
 
     const product = new Product({
       name,
-      owner: req.user.id,
+      owner: req.user._id,
       category,
       description,
       quantity,
@@ -46,7 +46,7 @@ exports.upload = async (req, res) => {
         typeof accepted_payment_methods === "string"
           ? JSON.parse(accepted_payment_methods)
           : accepted_payment_methods,
-      is_pre_order,
+      
       harvest_date,
       images,
     });
@@ -77,7 +77,6 @@ exports.get_all_products = async (req, res) => {
       min_price,
       max_price,
       grade,
-      is_pre_order,
       search,
       page = 1,
       limit = 20,

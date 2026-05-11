@@ -47,8 +47,8 @@ export default function DashboardPage() {
   const fetch_data = async (): Promise<void> => {
     try {
       const [products_res, orders_res]: any = await Promise.all([
-        api(`/products/farmer/${user?._id}`),
-        api("/orders/farmer-orders"),
+        api(`/products/farmer/${user?.id}`,{method:'GET'}),
+        api("/orders/farmer-orders", {method:'GET'}),
       ]);
       setProducts(products_res.products);
       setOrders(orders_res.orders);
